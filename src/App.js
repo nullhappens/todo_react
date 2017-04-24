@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {TodoForm, TodoList} from './components/todo';
 import {addTodo, generateId, findById, toggleTodo, updateTodo} from './lib/todoHelpers';
+import {pipe, partial} from './lib/utils';
 import logo from './logo.svg';
 import './App.css';
 
@@ -19,11 +20,10 @@ class App extends Component {
   }
 
   handleToggle(id) {
-    const todo = findById(id, this.state.todos);
-    const toggled = toggleTodo(todo);
-    const updatedTodos = updateTodo(this.state.todos, toggled);
+    const getUpdatedTodos = pipe(findById, toggleTodo, partial(updateTodo, this.state.todos));
+
     this.setState({
-      todos: updatedTodos
+      todos: getUpdatedTodos(id, this.state.todos)
     });
   }
 
